@@ -130,111 +130,31 @@ d3.csv("student_mental_health.csv")
 		
 		const radius = Math.min(pieWidth, pieHeight) / 2 - pieMargin * 2;
 		
-		// pie 1
     const pieSvg = d3.select("#pie-svg");
-    const g2_pie1 = pieSvg
-      .append("g")
-      .attr("width", width)
-      .attr("height", height)
-      .attr("transform", `translate(${pieMargin + radius},${pieMargin + radius})`);
 
-    const data_pie1 = { a: 20, b: 80 };
+		const data_pie1 = { a: 20, b: 80 };
+		drawPie(pieSvg, data_pie1, pieWidth, pieHeight, radius, 0, 0);
+		
+		const data_pie2 = { a: 60, b: 40 };
+		drawPie(pieSvg, data_pie2, pieWidth, pieHeight, radius, 1, 0);
 
-    const color_pie1 = d3
-      .scaleOrdinal()
-      .domain(Object.keys(data_pie1))
-      .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56"]);
-
-		const dataArray_pie1 = Object.entries(data_pie1).map(([key, value]) => ({key, value}));
-		const pie_pie1 = d3.pie().value(d => d.value).sort(null);
-		const data_ready_pie1 = pie_pie1(dataArray_pie1);
-
-		const arc_pie1 = d3.arc().innerRadius(0).outerRadius(radius)
-    g2_pie1.selectAll("whatever")
-      .data(data_ready_pie1)
-      .enter()
-      .append("path")
-      .attr("d", d => arc_pie1(d))
-      .attr("fill", d => color_pie1(d.data.key))
-      .attr("stroke", "black")
-      .style("stroke-width", "2px")
-      .style("opacity", 0.7);
-
-
-		// pie 2
-		const g2_pie2 = pieSvg
-      .append("g")
-      .attr("width", width)
-      .attr("height", height)
-      .attr("transform", `translate(${pieMargin + radius},${pieMargin + radius + pieMargin + radius * 2})`);
-
-    const data_pie2 = { a: 20, b: 80 };
-
-    const color_pie2 = d3
-      .scaleOrdinal()
-      .domain(Object.keys(data_pie2))
-      .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56"]);
-
-		const dataArray_pie2 = Object.entries(data_pie2).map(([key, value]) => ({key, value}));
-		const pie_pie2 = d3.pie().value(d => d.value).sort(null);
-		const data_ready_pie2 = pie_pie2(dataArray_pie2);
-
-		const arc_pie2 = d3.arc().innerRadius(0).outerRadius(radius)
-    g2_pie2.selectAll("whatever")
-      .data(data_ready_pie2)
-      .enter()
-      .append("path")
-      .attr("d", d => arc_pie2(d))
-      .attr("fill", d => color_pie2(d.data.key))
-      .attr("stroke", "black")
-      .style("stroke-width", "2px")
-      .style("opacity", 0.7);
-
-
-		// pie 3
-		const g2_pie3 = pieSvg
-      .append("g")
-      .attr("width", width)
-      .attr("height", height)
-      .attr("transform", `translate(${pieMargin + radius + pieMargin + radius * 2},${pieMargin + radius})`);
-
-    const data_pie3 = { a: 20, b: 80 };
-
-    const color_pie3 = d3
-      .scaleOrdinal()
-      .domain(Object.keys(data_pie3))
-      .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56"]);
-
-		const dataArray_pie3 = Object.entries(data_pie3).map(([key, value]) => ({key, value}));
-		const pie_pie3 = d3.pie().value(d => d.value).sort(null);
-		const data_ready_pie3 = pie_pie3(dataArray_pie3);
-
-		const arc_pie3 = d3.arc().innerRadius(0).outerRadius(radius)
-    g2_pie3.selectAll("whatever")
-      .data(data_ready_pie3)
-      .enter()
-      .append("path")
-      .attr("d", d => arc_pie3(d))
-      .attr("fill", d => color_pie3(d.data.key))
-      .attr("stroke", "black")
-      .style("stroke-width", "2px")
-      .style("opacity", 0.7);
-
-
+		const data_pie3 = { a: 10, b: 90 };
+		drawPie(pieSvg, data_pie3, pieWidth, pieHeight, radius, 0, 1);
+		
+		const data_pie4 = { a: 70, b: 30 };
+		drawPie(pieSvg, data_pie4, pieWidth, pieHeight, radius, 1, 1);
   })
   .catch(function (error) {
     console.log(error);
   });
 
 
-function drawPie(svg, pieWidth, pieHeight, radius, x, y) {
+function drawPie(svg, data, pieWidth, pieHeight, radius, x, y) {
     const g2 = svg
       .append("g")
       .attr("width", width)
       .attr("height", height)
       .attr("transform", `translate(${pieMargin + radius + ((pieMargin + radius * 2) * x)},${pieMargin + radius + ((pieMargin + radius * 2) * y)})`);
-
-    const data = { a: 20, b: 80 };
 
     const color = d3
       .scaleOrdinal()
