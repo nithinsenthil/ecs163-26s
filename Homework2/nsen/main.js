@@ -1,6 +1,6 @@
 let abFilter = 25;
-const width = window.innerWidth;
-const height = window.innerHeight;
+const width = window.innerWidth / 2;
+const height = window.innerHeight / 2;
 // const width = 400;
 // const height = 350;
 
@@ -8,7 +8,7 @@ let barChartMargin = { top: 40, right: 30, bottom: 85, left: 70 },
   barChartWidth = width - barChartMargin.left - barChartMargin.right,
   barChartHeight = height - barChartMargin.top - barChartMargin.bottom;
 
-let pieMargin = 50;
+let pieMargin = 30;
 
 // plots
 d3.csv("student_mental_health.csv")
@@ -125,54 +125,135 @@ d3.csv("student_mental_health.csv")
       .style("fill", barColor);
 
     // plot 2: Pie charts
-		const pieWidth = (width / 2) + pieMargin * 1.5
-		const pieHeight = (height / 2) + pieMargin * 1.5
-		
-		const radius = Math.min(pieWidth, pieHeight) / 2 - pieMargin * 2;
-		
+    const pieWidth = width / 2 + pieMargin * 1.5;
+    const pieHeight = height / 2 + pieMargin * 1.5;
+
+    const radius = Math.min(pieWidth, pieHeight) / 2 - pieMargin * 2;
+
     const pieSvg = d3.select("#pie-svg");
 
-		const data_pie1 = { a: 20, b: 80 };
-		drawPie(pieSvg, data_pie1, pieWidth, pieHeight, radius, 0, 0);
-		
-		const data_pie2 = { a: 60, b: 40 };
-		drawPie(pieSvg, data_pie2, pieWidth, pieHeight, radius, 1, 0);
+    // const data_pie1 = { a: 20, b: 80 };
+    const pieData = d3.rollup(
+      processedData,
+      (d) => (d.filter((f) => f.depression == "yes").length / d.length) * 100,
+      (d) => d.year,
+    );
+    // const
+    console.log(pieData);
 
-		const data_pie3 = { a: 10, b: 90 };
-		drawPie(pieSvg, data_pie3, pieWidth, pieHeight, radius, 0, 1);
-		
-		const data_pie4 = { a: 70, b: 30 };
-		drawPie(pieSvg, data_pie4, pieWidth, pieHeight, radius, 1, 1);
+    // console.log(pieData["year 1"])
+    const data_pie1 = {
+      a: pieData.get("year 1"),
+      b: 100 - pieData.get("year 1"),
+    };
+    drawPie(pieSvg, data_pie1, pieWidth, pieHeight, radius, 0, 0, "Year 1");
+
+    const data_pie2 = {
+      a: pieData.get("year 2"),
+      b: 100 - pieData.get("year 2"),
+    };
+    drawPie(pieSvg, data_pie2, pieWidth, pieHeight, radius, 1, 0, "Year 2");
+
+    const data_pie3 = {
+      a: pieData.get("year 3"),
+      b: 100 - pieData.get("year 3"),
+    };
+    drawPie(pieSvg, data_pie3, pieWidth, pieHeight, radius, 0, 1, "Year 3");
+
+    const data_pie4 = {
+      a: pieData.get("year 4"),
+      b: 100 - pieData.get("year 4"),
+    };
+    drawPie(pieSvg, data_pie4, pieWidth, pieHeight, radius, 1, 1, "Year 4");
+
+    const g2 = pieSvg
+      .append("g")
+      .attr("width", width)
+      .attr("height", height)
+      .attr("transform", `translate(${300},${100})`);
+
+    // Legend
+    g2.append("text")
+      .attr("font-size", "10px")
+      .attr("text-anchor", "left")
+      .text("Key");
+
+    // Color 1
+    const item1 = g2
+      .append("g")
+      .attr("transform", `translate(${-20},${10})`);
+
+    item1.append("rect")
+      .attr("width", "10px")
+      .attr("height", "10px")
+      .attr("fill", "#98abc5");
+      item1.append("text")
+      .attr("font-size", "10px")
+      .attr("text-anchor", "left")
+      .attr("transform", `translate(${15},${8})`)
+      .text("Depressed");
+    
+    // Color 2
+    const item2 = g2
+      .append("g")
+      .attr("transform", `translate(${-20},${30})`);
+
+    item2.append("rect")
+      .attr("width", "10px")
+      .attr("height", "10px")
+      .attr("fill", "#8a89a6");
+      item2.append("text")
+      .attr("font-size", "10px")
+      .attr("text-anchor", "left")
+      .attr("transform", `translate(${15},${8})`)
+      .text("Not Depressed");
+
   })
   .catch(function (error) {
     console.log(error);
   });
 
+function drawPie(svg, data, pieWidth, pieHeight, radius, x, y, text) {
+  const g2 = svg
+    .append("g")
+    .attr("width", width)
+    .attr("height", height)
+    .attr(
+      "transform",
+      `translate(${pieMargin + radius + (pieMargin + radius * 2) * x},${pieMargin + radius + (pieMargin + radius * 2) * y})`,
+    );
 
-function drawPie(svg, data, pieWidth, pieHeight, radius, x, y) {
-    const g2 = svg
-      .append("g")
-      .attr("width", width)
-      .attr("height", height)
-      .attr("transform", `translate(${pieMargin + radius + ((pieMargin + radius * 2) * x)},${pieMargin + radius + ((pieMargin + radius * 2) * y)})`);
+  const color = d3
+    .scaleOrdinal()
+    .domain(Object.keys(data))
+    .range(["#98abc5", "#8a89a6"]);
 
-    const color = d3
-      .scaleOrdinal()
-      .domain(Object.keys(data))
-      .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56"]);
+  const dataArray = Object.entries(data).map(([key, value]) => ({
+    key,
+    value,
+  }));
+  const pie = d3
+    .pie()
+    .value((d) => d.value)
+    .sort(null);
+  const data_ready = pie(dataArray);
 
-		const dataArray = Object.entries(data).map(([key, value]) => ({key, value}));
-		const pie = d3.pie().value(d => d.value).sort(null);
-		const data_ready = pie(dataArray);
+  const arc = d3.arc().innerRadius(0).outerRadius(radius);
+  g2.selectAll("whatever")
+    .data(data_ready)
+    .enter()
+    .append("path")
+    .attr("d", (d) => arc(d))
+    .attr("fill", (d) => color(d.data.key))
+    .attr("stroke", "black")
+    .style("stroke-width", "2px")
+    .style("opacity", 0.7);
 
-		const arc = d3.arc().innerRadius(0).outerRadius(radius)
-    g2.selectAll("whatever")
-      .data(data_ready)
-      .enter()
-      .append("path")
-      .attr("d", d => arc(d))
-      .attr("fill", d => color(d.data.key))
-      .attr("stroke", "black")
-      .style("stroke-width", "2px")
-      .style("opacity", 0.7);
+  // Label pie
+  g2.append("text")
+    .attr("x", 0)
+    .attr("y", radius + 15)
+    .attr("font-size", "10px")
+    .attr("text-anchor", "middle")
+    .text(text);
 }
