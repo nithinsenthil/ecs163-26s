@@ -6,13 +6,19 @@ const height = window.innerHeight / 3;
 // const width = 400;
 // const height = 350;
 
+const pieWindowWidth = window.innerWidth / 3;
+const pieWindowHeight = window.innerHeight / 3;
+
+const sankeyWindowWidth = (window.innerWidth / 12) * 5;
+const sankeyWindowHeight = (window.innerHeight / 10) * 6;
+
 let barChartMargin = { top: 40, right: 30, bottom: 85, left: 70 },
   barChartWidth = width - barChartMargin.left - barChartMargin.right,
   barChartHeight = height - barChartMargin.top - barChartMargin.bottom;
 
 let pieMargin = 30;
 
-let sankeyMargin = { top: 40, right: 30, bottom: 30, left: 80 },
+let sankeyMargin = { top: 40, right: 40, bottom: 30, left: 40 },
   sankeyWidth = width - sankeyMargin.left - sankeyMargin.right,
   sankeyHeight = height - sankeyMargin.top - sankeyMargin.bottom;
 
@@ -86,8 +92,8 @@ d3.csv("student_mental_health.csv")
     // Label x axis
     g1.append("text")
       .attr("x", barChartMargin.left + barChartWidth / 2)
-      .attr("y", height - 5)
-      .attr("font-size", "20px")
+      .attr("y", height - 45)
+      .attr("font-size", "14px")
       .attr("text-anchor", "middle")
       .text("GPA Range");
 
@@ -113,10 +119,10 @@ d3.csv("student_mental_health.csv")
     g1.append("text")
       .attr(
         "transform",
-        `translate(25, ${barChartMargin.top + barChartHeight / 2}) rotate(-90)`,
+        `translate(30, ${barChartMargin.top + barChartHeight / 2}) rotate(-90)`,
       )
       .attr("text-anchor", "middle")
-      .attr("font-size", "20px")
+      .attr("font-size", "14px")
       .text("Age (years)");
 
     // Draw bars
@@ -134,24 +140,34 @@ d3.csv("student_mental_health.csv")
       .attr("height", (d) => height - barChartMargin.bottom - y1(d.age))
       .style("fill", barColor);
 
+    // Plot Title
+    barSvg
+      .append("text")
+      .attr("x", width / 2)
+      .attr("y", barChartMargin.top / 2 + 10)
+      .attr("text-anchor", "middle")
+      .style("font-size", "16px")
+      .style("font-weight", "bold")
+      .text("Student GPA's by Age");
+
     // plot 2: Pie charts
     const pieWidth = width / 2 + pieMargin * 1.5;
     const pieHeight = height / 2 + pieMargin * 1.5;
 
     const radius = Math.min(pieWidth, pieHeight) / 2 - pieMargin * 2;
 
-    const pieSvg = d3.selectAll("#pie-svg");
+    const pieSvg = d3
+      .selectAll("#pie-svg")
+      // .attr("transform", "translate(125, 20)");
 
-    // const data_pie1 = { a: 20, b: 80 };
     const pieData = d3.rollup(
       processedData,
       (d) => (d.filter((f) => f.depression == "yes").length / d.length) * 100,
       (d) => d.year,
     );
-    // const
+
     console.log(pieData);
 
-    // console.log(pieData["year 1"])
     const data_pie1 = {
       a: pieData.get("year 1"),
       b: 100 - pieData.get("year 1"),
@@ -175,16 +191,26 @@ d3.csv("student_mental_health.csv")
       b: 100 - pieData.get("year 4"),
     };
     drawPie(pieSvg, data_pie4, pieWidth, pieHeight, radius, 1, 1, "Year 4");
-    
+
+    // Plot Title
+    pieSvg
+      .append("text")
+      .attr("x", width / 2 - pieMargin * 3)
+      .attr("y", pieMargin / 2 + 5)
+      .attr("text-anchor", "middle")
+      .style("font-size", "16px")
+      .style("font-weight", "bold")
+      .text("Ratio of Students with Depression");
+
     // Legend
     const g2 = pieSvg
       .append("g")
       .attr("width", width)
       .attr("height", height)
-      .attr("transform", `translate(${200},${50})`);
+      .attr("transform", `translate(${180},${60})`);
 
     g2.append("text")
-      .attr("font-size", "10px")
+      .attr("font-size", "12px")
       .attr("text-anchor", "left")
       .text("Key");
 
@@ -227,8 +253,8 @@ d3.csv("student_mental_health.csv")
       .append("rect")
       .attr("x", 0)
       .attr("y", 0)
-      .attr("width", width)
-      .attr("height", height)
+      .attr("width", sankeyWindowWidth)
+      .attr("height", sankeyWindowHeight)
       .style("fill", "#F4E9CD");
 
     const sankey = d3
@@ -239,11 +265,14 @@ d3.csv("student_mental_health.csv")
       .nodePadding(1)
       .extent([
         [sankeyMargin.left, sankeyMargin.top],
-        [width - sankeyMargin.right, height - sankeyMargin.bottom],
+        [
+          sankeyWindowWidth - sankeyMargin.right,
+          sankeyWindowHeight - sankeyMargin.bottom,
+        ],
       ]);
 
     const graphData = graph(processedData);
-    console.log("graphdata", graphData)
+    console.log("graphdata", graphData);
     const { nodes, links } = sankey({
       nodes: graphData.nodes.map((d) => Object.create(d)),
       links: graphData.links.map((d) => Object.create(d)),
@@ -283,23 +312,28 @@ d3.csv("student_mental_health.csv")
       .selectAll("text")
       .data(nodes)
       .join("text")
-      .attr("x", (d) => (d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 3))
+      .attr("x", (d) => (d.x0 < sankeyWindowWidth / 2 ? d.x1 + 6 : d.x0 - 3))
       .attr("y", (d) => (d.y1 + d.y0) / 2)
       .attr("dx", (d) => {
-        if (d.x0 < width / 2 - 50) {
+        if (d.x0 < sankeyWindowWidth / 2 - 50) {
+          // Left
           return "-2em";
-        } else if (d.x0 > width / 2 + 50) {
+        } else if (d.x0 > sankeyWindowWidth / 2 + 50) {
+          //  Right
           return "1.4em";
         } else {
-          return "1.0em";
+          // Center
+          return "2.3em";
         }
       })
       .attr("dy", "0.35em")
-      .attr("text-anchor", (d) => (d.x0 < width / 2 ? "end" : "start"))
+      .attr("text-anchor", (d) =>
+        d.x0 < sankeyWindowWidth / 2 ? "end" : "start",
+      )
       .attr("font-size", (d) => {
-        if (d.x0 < width / 2 - 50) {
+        if (d.x0 < sankeyWindowWidth / 2 - 50) {
           return 7;
-        } else if (d.x0 > width / 2 + 50) {
+        } else if (d.x0 > sankeyWindowWidth / 2 + 50) {
           return 6;
         } else {
           return 9;
@@ -308,6 +342,47 @@ d3.csv("student_mental_health.csv")
       .text((d) => d.name)
       .append("tspan")
       .attr("fill-opacity", 0.7);
+
+    // Plot Title
+    sankeySvg
+      .append("text")
+      .attr("x", sankeyWindowWidth / 2)
+      .attr("y", sankeyMargin.top / 2 + 5)
+      .attr("text-anchor", "middle")
+      .style("font-size", "13px")
+      .style("font-weight", "bold")
+      .style("font-family", "arial")
+      .text("Gender and Year Distribution Across GPA's");
+
+    // Left label
+    sankeySvg
+      .append("text")
+      .attr("x", sankeyMargin.left)
+      .attr("y", sankeyWindowHeight - 5)
+      .attr("text-anchor", "middle")
+      .style("font-size", "12px")
+      .style("font-family", "sans-serif")
+      .text("Gender");
+
+    // Center label
+    sankeySvg
+      .append("text")
+      .attr("x", sankeyMargin.left + sankeyWidth / 2 + 50)
+      .attr("y", sankeyWindowHeight - 5)
+      .attr("text-anchor", "middle")
+      .style("font-size", "12px")
+      .style("font-family", "sans-serif")
+      .text("Year");
+
+    // Right label
+    sankeySvg
+      .append("text")
+      .attr("x", sankeyWindowWidth - sankeyMargin.right)
+      .attr("y", sankeyWindowHeight - 5)
+      .attr("text-anchor", "middle")
+      .style("font-size", "12px")
+      .style("font-family", "sans-serif")
+      .text("GPA");
   })
   .catch(function (error) {
     console.log(error);
@@ -378,18 +453,16 @@ function graph(processedData) {
     }
   }
 
-  console.log("nodeByKey", nodeByKey)
-  console.log("indexByKey", indexByKey)
+  console.log("nodeByKey", nodeByKey);
+  console.log("indexByKey", indexByKey);
 
   for (let i = 1; i < keys.length; ++i) {
     const a = keys[i - 1].toLowerCase();
     const b = keys[i].toLowerCase();
     const prefix = keys.slice(0, i + 1);
-    // console.log(prefix)
     const linkByKey = new d3.InternMap([], JSON.stringify);
     for (const d of processedData) {
       const names = prefix.map((k) => d[k.toLowerCase()]);
-      console.log(names)
       const value = d.value || 1;
       let link = linkByKey.get(names);
       if (link) {

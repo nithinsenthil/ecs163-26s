@@ -1,33 +1,43 @@
 .pie {
-  /* Equal to: translateX(10px) or translate(10px, 0) */
-  position: absolute;
-	/* display: flex; */
-  /* justify-content: center; */
-  /* align-items: center; */
-	/* transform: translateX(50%); */
-	background-color: blue;
+	/* background-color: blue; */
+  position: relative;
+	/* width: 100% */
+	transform: translateX(100)
+	/* transform: translate(1000, 0px); */
 }
 
 .bar {
-  /* Equal to: translateX(10px) or translate(10px, 0) */
-  /* transform: translate(20px); */
-  background-color: pink;
+  /* background-color: pink; */
+	position: relative;
 }
 
 .sankey {
-	background-color: red;
-	box-sizing: border-box;
+	/* background-color: red; */
+	/* box-sizing: border-box; */
 	width: 50%;
-	transform: translate(50%, 80px);
+	/* height: 100%; */
+	transform: translate(0, -50px);
 }
 
 .inline-block-child {
 	width: 50%;
   display: inline-block;
-	/* padding: 1rem; */
-	box-sizing: border-box;
+	/* box-sizing: border-box; */
+	/* padding: 2rem */
 }
+
+.right {
+	align-items: center;
+}
+
 .parent {
-  background: mediumpurple;
-  padding: 1rem;
+  /* background: mediumpurple; */
+	/* width: fit-content; */
+	/* display: inline-block; */
+	/* box-sizing: border-box; */
+	/* min-width: 100%; */
+  /* padding: 0.5rem; */
+
+	display: flex;
+	gap: 20px;
 }
