@@ -1,0 +1,21 @@
+.pie {
+  /* Equal to: translateX(10px) or translate(10px, 0) */
+  transform: translate(50px);
+	background-color: blue;
+}
+
+.bar {
+  /* Equal to: translateX(10px) or translate(10px, 0) */
+  transform: translate(20);
+  background-color: pink;
+}
+
+.inline-block-child {
+  display: inline-block;
+}
+.parent {
+  background: mediumpurple;
+  padding: 1rem;
+}
+
+
