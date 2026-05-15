@@ -1,11 +1,15 @@
-.pie {
-	/* background-color: blue; */
-  position: relative;
+.parent {
+  /* background: mediumpurple; */
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	gap: 20px;
 }
 
-.bar {
-  /* background-color: pink; */
-	position: relative;
+.inline-block-child {
+	width: 50%;
+  display: inline-block;
 }
 
 .sankey {
@@ -14,20 +18,12 @@
 	transform: translate(0, -50px);
 }
 
-.inline-block-child {
-	width: 50%;
-  display: inline-block;
+.pie {
+	/* background-color: blue; */
+  position: relative;
 }
 
-.right {
-	align-items: center;
-}
-
-.parent {
-  /* background: mediumpurple; */
-	display: flex;
-	justify-content: center;
-	align-items: center;
-
-	gap: 20px;
+.bar {
+  /* background-color: pink; */
+	position: relative;
 }
