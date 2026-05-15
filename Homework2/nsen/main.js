@@ -87,12 +87,13 @@ d3.csv("student_mental_health.csv")
       .attr("transform", `translate(0, ${height - barChartMargin.bottom})`)
       .call(xAxisCall)
       .selectAll("text")
-      .attr("text-anchor", "end");
+      .attr("transform", `translate(3, 3) rotate(20)`)
+      .attr("text-anchor", "start");
 
     // Label x axis
     g1.append("text")
       .attr("x", barChartMargin.left + barChartWidth / 2)
-      .attr("y", height - 45)
+      .attr("y", height - 30)
       .attr("font-size", "14px")
       .attr("text-anchor", "middle")
       .text("GPA Range");
@@ -140,6 +141,11 @@ d3.csv("student_mental_health.csv")
       .attr("height", (d) => height - barChartMargin.bottom - y1(d.age))
       .style("fill", barColor);
 
+    // Bar titles
+    rect
+      .append("title")
+      .text((d) => `GPA Range: ${d.gpa}\nAge (years): ${d.age.toFixed(2)}`);
+
     // Plot Title
     barSvg
       .append("text")
@@ -149,6 +155,18 @@ d3.csv("student_mental_health.csv")
       .style("font-size", "16px")
       .style("font-weight", "bold")
       .text("Student GPA's by Age");
+
+    // Highlight on mouse enter
+    rect
+      .on("mouseenter", function (event, d) {
+        d3.select(this)
+          .transition()
+          .duration(150)
+          .style("fill", highlightColor);
+      })
+      .on("mouseleave", function () {
+        d3.select(this).transition().duration(150).style("fill", barColor);
+      });
 
     // plot 2: Pie charts
     const pieWidth = width / 2 + pieMargin * 1.5;
@@ -220,7 +238,7 @@ d3.csv("student_mental_health.csv")
       .append("rect")
       .attr("width", "10px")
       .attr("height", "10px")
-      .attr("fill", "#98abc5");
+      .attr("fill", "orange");
     item1
       .append("text")
       .attr("font-size", "10px")
@@ -235,7 +253,7 @@ d3.csv("student_mental_health.csv")
       .append("rect")
       .attr("width", "10px")
       .attr("height", "10px")
-      .attr("fill", "#8a89a6");
+      .attr("fill", "#77ACA2");
     item2
       .append("text")
       .attr("font-size", "10px")
@@ -245,16 +263,7 @@ d3.csv("student_mental_health.csv")
 
     // plot 3: Sankey
     const color = "#77ACA2";
-    const sankeyHighlightColor = "orange";
     const sankeySvg = d3.selectAll("#sankey-svg");
-
-    sankeySvg
-      .append("rect")
-      .attr("x", 0)
-      .attr("y", 0)
-      .attr("width", sankeyWindowWidth)
-      .attr("height", sankeyWindowHeight)
-      .style("fill", "#F4E9CD");
 
     const sankey = d3
       .sankey()
@@ -399,7 +408,7 @@ function drawPie(svg, data, pieWidth, pieHeight, radius, x, y, text) {
   const color = d3
     .scaleOrdinal()
     .domain(Object.keys(data))
-    .range(["#98abc5", "#8a89a6"]);
+    .range(["orange", "#77ACA2"]);
 
   const dataArray = Object.entries(data).map(([key, value]) => ({
     key,
@@ -410,9 +419,11 @@ function drawPie(svg, data, pieWidth, pieHeight, radius, x, y, text) {
     .value((d) => d.value)
     .sort(null);
   const data_ready = pie(dataArray);
+  console.log("dataready", data_ready);
 
   const arc = d3.arc().innerRadius(0).outerRadius(radius);
-  g2.selectAll("whatever")
+  const pieElement = g2
+    .selectAll("whatever")
     .data(data_ready)
     .enter()
     .append("path")
@@ -421,6 +432,13 @@ function drawPie(svg, data, pieWidth, pieHeight, radius, x, y, text) {
     .attr("stroke", "black")
     .style("stroke-width", "2px")
     .style("opacity", 0.7);
+
+  pieElement
+    .append("title")
+    .text(
+      (d) =>
+        `${text}\nDepressed: ${data_ready[0].value.toFixed(2)}%\nNot Depressed: ${data_ready[1].value.toFixed(2)}%`,
+    );
 
   // Label pie
   g2.append("text")
