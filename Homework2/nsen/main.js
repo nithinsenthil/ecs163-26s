@@ -16,9 +16,9 @@ let barChartMargin = { top: 40, right: 30, bottom: 85, left: 70 },
   barChartWidth = width - barChartMargin.left - barChartMargin.right,
   barChartHeight = height - barChartMargin.top - barChartMargin.bottom;
 
-let pieMargin = 30;
+let pieMargin = 25;
 
-let sankeyMargin = { top: 40, right: 40, bottom: 30, left: 40 },
+let sankeyMargin = { top: 40, right: 50, bottom: 30, left: 50 },
   sankeyWidth = width - sankeyMargin.left - sankeyMargin.right,
   sankeyHeight = height - sankeyMargin.top - sankeyMargin.bottom;
 
@@ -143,7 +143,7 @@ d3.csv("student_mental_health.csv")
     // Plot Title
     barSvg
       .append("text")
-      .attr("x", width / 2)
+      .attr("x", barChartMargin.left + barChartWidth / 2)
       .attr("y", barChartMargin.top / 2 + 10)
       .attr("text-anchor", "middle")
       .style("font-size", "16px")
@@ -156,9 +156,9 @@ d3.csv("student_mental_health.csv")
 
     const radius = Math.min(pieWidth, pieHeight) / 2 - pieMargin * 2;
 
-    const pieSvg = d3
-      .selectAll("#pie-svg")
-      // .attr("transform", "translate(125, 20)");
+    const pieSvg = d3.selectAll("#pie-svg")
+    // .attr("transform", `translate(${pieWindowWidth / 5}, ${pieWindowHeight / 10})`);
+    
 
     const pieData = d3.rollup(
       processedData,
@@ -196,7 +196,7 @@ d3.csv("student_mental_health.csv")
     pieSvg
       .append("text")
       .attr("x", width / 2 - pieMargin * 3)
-      .attr("y", pieMargin / 2 + 5)
+      .attr("y", pieMargin / 2)
       .attr("text-anchor", "middle")
       .style("font-size", "16px")
       .style("font-weight", "bold")
@@ -207,7 +207,7 @@ d3.csv("student_mental_health.csv")
       .append("g")
       .attr("width", width)
       .attr("height", height)
-      .attr("transform", `translate(${180},${60})`);
+      .attr("transform", `translate(${200},${60})`);
 
     g2.append("text")
       .attr("font-size", "12px")
@@ -332,10 +332,13 @@ d3.csv("student_mental_health.csv")
       )
       .attr("font-size", (d) => {
         if (d.x0 < sankeyWindowWidth / 2 - 50) {
-          return 7;
+          // Left
+          return 9;
         } else if (d.x0 > sankeyWindowWidth / 2 + 50) {
-          return 6;
+          // Right
+          return 8;
         } else {
+          // Center
           return 9;
         }
       })
@@ -349,9 +352,8 @@ d3.csv("student_mental_health.csv")
       .attr("x", sankeyWindowWidth / 2)
       .attr("y", sankeyMargin.top / 2 + 5)
       .attr("text-anchor", "middle")
-      .style("font-size", "13px")
+      .style("font-size", "16px")
       .style("font-weight", "bold")
-      .style("font-family", "arial")
       .text("Gender and Year Distribution Across GPA's");
 
     // Left label
@@ -360,8 +362,7 @@ d3.csv("student_mental_health.csv")
       .attr("x", sankeyMargin.left)
       .attr("y", sankeyWindowHeight - 5)
       .attr("text-anchor", "middle")
-      .style("font-size", "12px")
-      .style("font-family", "sans-serif")
+      .style("font-size", "14px")
       .text("Gender");
 
     // Center label
@@ -370,8 +371,7 @@ d3.csv("student_mental_health.csv")
       .attr("x", sankeyMargin.left + sankeyWidth / 2 + 50)
       .attr("y", sankeyWindowHeight - 5)
       .attr("text-anchor", "middle")
-      .style("font-size", "12px")
-      .style("font-family", "sans-serif")
+      .style("font-size", "14px")
       .text("Year");
 
     // Right label
@@ -380,8 +380,7 @@ d3.csv("student_mental_health.csv")
       .attr("x", sankeyWindowWidth - sankeyMargin.right)
       .attr("y", sankeyWindowHeight - 5)
       .attr("text-anchor", "middle")
-      .style("font-size", "12px")
-      .style("font-family", "sans-serif")
+      .style("font-size", "14px")
       .text("GPA");
   })
   .catch(function (error) {

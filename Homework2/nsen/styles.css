@@ -1,9 +1,6 @@
 .pie {
 	/* background-color: blue; */
   position: relative;
-	/* width: 100% */
-	transform: translateX(100)
-	/* transform: translate(1000, 0px); */
 }
 
 .bar {
@@ -13,17 +10,13 @@
 
 .sankey {
 	/* background-color: red; */
-	/* box-sizing: border-box; */
 	width: 50%;
-	/* height: 100%; */
 	transform: translate(0, -50px);
 }
 
 .inline-block-child {
 	width: 50%;
   display: inline-block;
-	/* box-sizing: border-box; */
-	/* padding: 2rem */
 }
 
 .right {
@@ -32,12 +25,9 @@
 
 .parent {
   /* background: mediumpurple; */
-	/* width: fit-content; */
-	/* display: inline-block; */
-	/* box-sizing: border-box; */
-	/* min-width: 100%; */
-  /* padding: 0.5rem; */
-
 	display: flex;
+	justify-content: center;
+	align-items: center;
+
 	gap: 20px;
 }
