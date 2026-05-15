@@ -16,7 +16,7 @@ let barChartMargin = { top: 40, right: 30, bottom: 85, left: 70 },
   barChartWidth = width - barChartMargin.left - barChartMargin.right,
   barChartHeight = height - barChartMargin.top - barChartMargin.bottom;
 
-let pieMargin = 25;
+let pieMargin = 35;
 
 let sankeyMargin = { top: 40, right: 50, bottom: 30, left: 50 },
   sankeyWidth = width - sankeyMargin.left - sankeyMargin.right,
@@ -224,7 +224,7 @@ d3.csv("data/student_mental_health.csv")
       .append("g")
       .attr("width", width)
       .attr("height", height)
-      .attr("transform", `translate(${200},${60})`);
+      .attr("transform", `translate(${pieMargin * 3 + radius * 5},${radius * 2 + pieMargin})`);
 
     g2.append("text")
       .attr("font-size", "12px")
